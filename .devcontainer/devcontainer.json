@@ -1,0 +1,18 @@
+{
+    "name": "Code as a Crime Scene Workshop",
+    "dockerFile": "Dockerfile",
+    "forwardPorts": [],
+    "postCreateCommand": "git clone https://github.com/adamtornhill/maat-scripts.git /workspace/maat-scripts",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "vscjava.vscode-java-pack",
+                "redhat.java",
+                "github.copilot"
+            ],
+            "settings": {
+                "terminal.integrated.shell.linux": "/bin/bash"
+            }
+        }
+    }
+} 

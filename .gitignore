@@ -1,0 +1,16 @@
+# Ignore analysis results
+analysis_results/
+
+# Ignore cloned repositories
+repos/
+
+# Ignore VS Code specific files
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db 
