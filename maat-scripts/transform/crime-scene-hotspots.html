@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.node {
+  cursor: pointer;
+}
+
+.node:hover {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node--root {
+  stroke: #777;
+  stroke-width: 2px;
+  pointer-events: none;
+}
+
+.node--leaf {
+  fill: white;
+  stroke: #777;
+  stroke-width: 1px;
+  pointer-events: auto;
+}
+
+.label {
+  font: 14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-anchor: middle;
+  fill: black;
+  pointer-events: none;
+}
+
+/* Tooltip style */
+.tooltip {
+  position: absolute;
+  padding: 6px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  border-radius: 3px;
+  font: 12px sans-serif;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+
+/* Info box style */
+.info-box {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 250px;
+  padding: 15px;
+  background: rgba(245, 245, 245, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  z-index: 100;
+  display: none;
+}
+
+.info-box h3 {
+  margin-top: 0;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  font-size: 16px;
+}
+
+.info-box p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+</style>
+<body>
+<!-- Info box container -->
+<div id="info-box" class="info-box">
+  <h3>File Information</h3>
+  <p id="file-name">No file selected</p>
+  <p>Commits: <span id="file-commits">0</span></p>
+  <p>Weight: <span id="file-weight">0</span></p>
+</div>
+
+<script src="d3/d3.min.js"></script>
+<script>
+
+var margin = 10,
+    outerDiameter = 960,
+    innerDiameter = outerDiameter - margin - margin;
+
+var x = d3.scale.linear()
+    .range([0, innerDiameter]);
+
+var y = d3.scale.linear()
+    .range([0, innerDiameter]);
+
+var color = d3.scale.linear()
+    .domain([-1, 5])
+    .range(["hsl(185,60%,99%)", "hsl(187,40%,70%)"])
+    .interpolate(d3.interpolateHcl);
+
+var pack = d3.layout.pack()
+    .padding(2)
+    .size([innerDiameter, innerDiameter])
+    .value(function(d) { return d.size; })
+
+var svg = d3.select("body").append("svg")
+    .attr("width", outerDiameter)
+    .attr("height", outerDiameter)
+  .append("g")
+    .attr("transform", "translate(" + margin + "," + margin + ")");
+
+// Create tooltip div
+var tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip");
+
+d3.json("hotspots.json", function(error, root) {
+  var focus = root,
+      nodes = pack.nodes(root);
+
+  svg.append("g").selectAll("circle")
+      .data(nodes)
+    .enter().append("circle")
+      .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+      .attr("r", function(d) { return d.r; })
+      .style("fill", function(d) { return d.weight > 0.0 ? "rgba(139, 0, 0, 0.7674418604651163)" :
+      d.children ? color(d.depth) : "WhiteSmoke"; })
+      .style("fill-opacity", function(d) { 
+        // Apply power scaling to weight to make lower values more visible
+        return d.weight > 0 ? Math.pow(d.weight, 0.3) : d.weight; 
+      })
+      .on("click", function(d) { 
+        // Only allow click-to-zoom on non-leaf nodes
+        if (d.children || d === root) {
+          return zoom(focus == d ? root : d);
+        } else {
+          // Display file info for leaf nodes
+          displayFileInfo(d);
+        }
+      })
+      .on("mouseover", function(d) {
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", 0.9);
+        tooltip.html(d.name)
+          .style("left", (d3.event.pageX + 10) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mousemove", function() {
+        tooltip.style("left", (d3.event.pageX + 10) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
+      })
+      .on("mouseout", function() {
+        tooltip.transition()
+          .duration(500)
+          .style("opacity", 0);
+      });
+
+  svg.append("g").selectAll("text")
+      .data(nodes)
+    .enter().append("text")
+      .attr("class", "label")
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+      .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
+      .style("display", function(d) { return d.parent === root ? null : "none"; })
+      .text(function(d) { 
+        // Truncate label if too long based on the circle radius
+        var name = d.name;
+        var maxLength = Math.max(3, Math.floor(d.r / 3.5));
+        return name.length > maxLength ? name.substring(0, maxLength-3) + "..." : name;
+      });
+
+  d3.select(window)
+      .on("click", function() { zoom(root); });
+
+  // Function to display file information
+  function displayFileInfo(d) {
+    // Get the info box elements
+    var infoBox = document.getElementById("info-box");
+    var fileName = document.getElementById("file-name");
+    var fileCommits = document.getElementById("file-commits");
+    var fileWeight = document.getElementById("file-weight");
+    
+    // Update with file data
+    fileName.textContent = d.name;
+    fileCommits.textContent = d.size || "N/A";
+    fileWeight.textContent = (d.weight * 100).toFixed(2) + "% (display: " + (Math.pow(d.weight, 0.3) * 100).toFixed(2) + "%)";
+    
+    // Show the info box
+    infoBox.style.display = "block";
+    
+    // Prevent event from bubbling to window
+    d3.event.stopPropagation();
+  }
+
+  function zoom(d, i) {
+    var focus0 = focus;
+    focus = d;
+
+    var k = innerDiameter / d.r / 2;
+    x.domain([d.x - d.r, d.x + d.r]);
+    y.domain([d.y - d.r, d.y + d.r]);
+    d3.event.stopPropagation();
+
+    var transition = d3.selectAll("text,circle").transition()
+        .duration(d3.event.altKey ? 7500 : 750)
+        .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+
+    transition.filter("circle")
+        .attr("r", function(d) { return k * d.r; });
+
+    transition.filter("text")
+      .filter(function(d) { return d.parent === focus || d.parent === focus0; })
+        .style("fill-opacity", function(d) { return d.parent === focus ? 1 : 0; })
+        .each("start", function(d) { 
+          if (d.parent === focus) {
+            this.style.display = "inline";
+            // Adjust font size based on the circle size after zoom
+            var fontSize = Math.min(14, Math.max(8, k * d.r / 10));
+            d3.select(this).style("font-size", fontSize + "px");
+            
+            // Update text content based on new size
+            var maxLength = Math.max(3, Math.floor(k * d.r / 3.5));
+            var name = d.name;
+            var displayName = name.length > maxLength ? name.substring(0, maxLength-3) + "..." : name;
+            d3.select(this).text(displayName);
+          }
+        })
+        .each("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+  }}
+);
+
+d3.select(self.frameElement).style("height", outerDiameter + "px");
+
+</script>

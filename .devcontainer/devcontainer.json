@@ -2,7 +2,6 @@
     "name": "Code as a Crime Scene Workshop",
     "dockerFile": "Dockerfile",
     "forwardPorts": [],
-    "postCreateCommand": "git clone -b python3 https://github.com/adamtornhill/maat-scripts.git /workspaces/crimebox/maat-scripts",
     "customizations": {
         "vscode": {
             "extensions": [

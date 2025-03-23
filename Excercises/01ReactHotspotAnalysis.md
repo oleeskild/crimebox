@@ -33,11 +33,33 @@ cloc ./ --unix --by-file --csv --quiet --report-file=complexity.csv
 8. Run the merge script found in the maat-scripts folder to combine the two metrics. 
 
 ```bash
-python3 /workspaces/crimebox/maat-scripts/merge/merge_comp_freqs.py revisions.csv complexity.csv
+python3 /workspaces/crimebox/maat-scripts/merge/merge_comp_freqs.py revisions.csv complexity.csv > hotspots.csv
 ```
 
-9. Convert it into JSON that is compatible with D3.js' circle packing visualization.
+9. Look at the hotspots.csv to spot your top hotspots. That is those that are both complex _and_ are frequently changed. 
+
+
+10. Now, convert it into JSON that is compatible with D3.js' circle packing visualization.
 
 ```bash
 python3 /workspaces/crimebox/maat-scripts/transform/csv_as_enclosure_json.py --structure complexity.csv --weights revisions.csv > hotspots.json
 ```
+
+
+11. Copy the hotspots.json into the `maat-scripts/transform folder`
+
+```bash
+cp hotspots.json /workspaces/crimebox/maat-scripts/transform/
+```
+
+12. Run a static file server to see the result
+
+```bash
+cd /workspaces/crimebox/maat-scripts/transform/
+```
+
+```bash
+python3 -m http.server 8080
+```
+
+12. If using GitHub codespaces, go to the PORTS tab next to the terminal tab, and click the URL. Then click on the crime-scenehotspot.html file on the webpage.
