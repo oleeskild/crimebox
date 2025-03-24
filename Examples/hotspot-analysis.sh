@@ -75,17 +75,18 @@ python3 "$MAAT_SCRIPTS_DIR/transform/csv_as_enclosure_json.py" \
     --weights "$REPO_ANALYSIS_DIR/hotspots.csv" \
     > "$REPO_ANALYSIS_DIR/hotspots.json"
 
-# Copy the JSON to transform directory for visualization
-echo "Copying JSON to visualization directory..."
-cp "$REPO_ANALYSIS_DIR/hotspots.json" "$TRANSFORM_DIR/hotspots.json"
+# Copy the visualization files to the analysis directory
+echo "Copying visualization files..."
+cp "$TRANSFORM_DIR/crime-scene-hotspots.html" "$REPO_ANALYSIS_DIR/"
+cp -r "$TRANSFORM_DIR/d3" "$REPO_ANALYSIS_DIR/"
 
 echo "Analysis complete!"
 echo "Analysis results stored in: $REPO_ANALYSIS_DIR"
 echo "Hotspots CSV: $REPO_ANALYSIS_DIR/hotspots.csv"
-echo "Hotspots JSON: $REPO_ANALYSIS_DIR/hotspots.json (and copied to $TRANSFORM_DIR/)"
+echo "Hotspots JSON: $REPO_ANALYSIS_DIR/hotspots.json"
 
-# Start HTTP server in the transform directory
+# Start HTTP server in the analysis directory
 echo "Starting HTTP server for visualization..."
 echo "Open your browser at http://localhost:8000/crime-scene-hotspots.html"
-cd "$TRANSFORM_DIR"
-python3 -m http.server
+cd "$REPO_ANALYSIS_DIR"
+python3 -m http.server 8000

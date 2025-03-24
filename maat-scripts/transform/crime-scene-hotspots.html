@@ -120,12 +120,18 @@ d3.json("hotspots.json", function(error, root) {
   var focus = root,
       nodes = pack.nodes(root);
 
+  var k = innerDiameter / root.r / 2; // Calculate initial scaling factor
+
+  // Set initial domain for scales
+  x.domain([root.x - root.r, root.x + root.r]);
+  y.domain([root.y - root.r, root.y + root.r]);
+
   svg.append("g").selectAll("circle")
       .data(nodes)
     .enter().append("circle")
       .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-      .attr("r", function(d) { return d.r; })
+      .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; })
+      .attr("r", function(d) { return k * d.r; })
       .style("fill", function(d) { return d.weight > 0.0 ? "rgba(139, 0, 0, 0.7674418604651163)" :
       d.children ? color(d.depth) : "WhiteSmoke"; })
       .style("fill-opacity", function(d) { 
@@ -163,13 +169,22 @@ d3.json("hotspots.json", function(error, root) {
       .data(nodes)
     .enter().append("text")
       .attr("class", "label")
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-      .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
-      .style("display", function(d) { return d.parent === root ? null : "none"; })
+      .attr("transform", function(d) { 
+        return "translate(" + x(d.x) + "," + (y(d.y) - k * d.r - 5) + ")"; 
+      })
+      .style("fill-opacity", function(d) { 
+        return d.parent === root || (d.parent && d.parent.parent === root) ? 1 : 0; 
+      })
+      .style("display", function(d) { 
+        return d.parent === root || (d.parent && d.parent.parent === root) ? null : "none"; 
+      })
+      .style("font-size", function(d) {
+        return Math.min(14, Math.max(8, k * d.r / 10)) + "px";
+      })
+      .style("text-anchor", "middle")
       .text(function(d) { 
-        // Truncate label if too long based on the circle radius
         var name = d.name;
-        var maxLength = Math.max(3, Math.floor(d.r / 3.5));
+        var maxLength = Math.max(3, Math.floor(k * d.r / 1.5));
         return name.length > maxLength ? name.substring(0, maxLength-3) + "..." : name;
       });
 
@@ -207,31 +222,51 @@ d3.json("hotspots.json", function(error, root) {
 
     var transition = d3.selectAll("text,circle").transition()
         .duration(d3.event.altKey ? 7500 : 750)
-        .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+        .attr("transform", function(d) { 
+          if (d3.select(this).attr("class") === "label") {
+            return "translate(" + x(d.x) + "," + (y(d.y) - k * d.r - 5) + ")";
+          }
+          return "translate(" + x(d.x) + "," + y(d.y) + ")";
+        });
 
     transition.filter("circle")
         .attr("r", function(d) { return k * d.r; });
 
     transition.filter("text")
-      .filter(function(d) { return d.parent === focus || d.parent === focus0; })
-        .style("fill-opacity", function(d) { return d.parent === focus ? 1 : 0; })
+      .filter(function(d) { 
+        return d.parent === focus || 
+               d.parent === focus0 || 
+               (d.parent && d.parent.parent === focus) || 
+               (d.parent && d.parent.parent === focus0); 
+      })
+        .style("fill-opacity", function(d) { 
+          return (d.parent === focus || d.parent === focus0 || 
+                  (d.parent && d.parent.parent === focus) || 
+                  (d.parent && d.parent.parent === focus0)) ? 1 : 0; 
+        })
         .each("start", function(d) { 
-          if (d.parent === focus) {
+          if (d.parent === focus || d.parent === focus0 || 
+              (d.parent && d.parent.parent === focus) || 
+              (d.parent && d.parent.parent === focus0)) {
             this.style.display = "inline";
-            // Adjust font size based on the circle size after zoom
             var fontSize = Math.min(14, Math.max(8, k * d.r / 10));
             d3.select(this).style("font-size", fontSize + "px");
             
-            // Update text content based on new size
-            var maxLength = Math.max(3, Math.floor(k * d.r / 3.5));
+            var maxLength = Math.max(3, Math.floor(k * d.r / 1.5));
             var name = d.name;
             var displayName = name.length > maxLength ? name.substring(0, maxLength-3) + "..." : name;
             d3.select(this).text(displayName);
           }
         })
-        .each("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
-  }}
-);
+        .each("end", function(d) { 
+          if (d.parent !== focus && d.parent !== focus0 && 
+              (!d.parent || d.parent.parent !== focus) && 
+              (!d.parent || d.parent.parent !== focus0)) {
+            this.style.display = "none";
+          }
+        });
+  }
+});
 
 d3.select(self.frameElement).style("height", outerDiameter + "px");
 
