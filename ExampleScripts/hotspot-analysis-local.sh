@@ -52,7 +52,7 @@ git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renam
 # Run cloc for language statistics from inside the repository
 echo "Running cloc analysis..."
 # Run cloc from within the repository to get correct relative paths
-cloc . --by-file --csv --exclude-dir=bin,obj --out="$REPO_ANALYSIS_DIR/complexity.csv"
+cloc . --by-file --csv --exclude-dir=bin,obj,node_modules,dist,build --out="$REPO_ANALYSIS_DIR/complexity.csv"
 
 # Return to the root directory
 cd "$ABSOLUTE_ROOT_DIR"
