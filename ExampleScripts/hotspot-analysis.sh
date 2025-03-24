@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Script to analyze Vue.js for hotspots and visualize them
+# Script to analyze a repository for hotspots and visualize them
 # Exit on error
 set -e
 
 # Determine absolute paths
-if [[ $(basename $(pwd)) == "Examples" ]]; then
+if [[ $(basename $(pwd)) == "ExampleScripts" ]]; then
     # Running from Examples directory
     ABSOLUTE_ROOT_DIR=$(cd ..; pwd)
 else
