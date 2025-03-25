@@ -54,6 +54,7 @@ cd /workspace/maat-scripts
 
 For more information about "Code as a Crime Scene" techniques, check out:
 
+- [Workshop Cheatsheet](https://notes.ole.dev/cheatsheet)
 - [Your Code as a Crime Scene](https://pragprog.com/titles/atcrime/your-code-as-a-crime-scene/) by Adam Tornhill
 - [Code-Maat GitHub Repository](https://github.com/adamtornhill/code-maat)
 - [Maat-Scripts GitHub Repository](https://github.com/adamtornhill/maat-scripts)
