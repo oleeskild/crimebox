@@ -1,14 +1,8 @@
-# Code as a Crime Scene Workshop
+# Your Code as a Crime Scene Workshop
 
 This repository contains a dev container setup for the "Code as a Crime Scene" workshop. The container comes pre-configured with all the tools needed for the workshop.
 
-## Prerequisites
-
-- [Docker](https://www.docker.com/products/docker-desktop)
-- [Visual Studio Code](https://code.visualstudio.com/)
-- [VS Code Remote - Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
-
-## What's Included
+## What's Included in the container
 
 - Java 17 (OpenJDK)
 - Code-Maat tool
@@ -16,6 +10,12 @@ This repository contains a dev container setup for the "Code as a Crime Scene" w
 - Maat-scripts repository (located at `/workspace/maat-scripts`)
 
 ## Getting Started
+
+### Option 1
+Open it via codespaces in GitHub
+
+### Option 2
+Open it locally on your computer
 
 1. Clone this repository
 2. Open the repository in VS Code
