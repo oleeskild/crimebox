@@ -1,6 +1,6 @@
 # Run analysis on local code
 
-1. Clone the crimebox repo to you machin
+1. Clone the crimebox repository down to you machine
 
 2. Open it in VS Code
 

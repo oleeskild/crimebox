@@ -14,8 +14,9 @@ else
 fi
 
 # Variables
-REPO_PATH="/code"
-REPO_NAME="FjordTours.Availability2"
+REPO_NAME="MyRepoName" # CHANGE THIS TO MATCH YOUR REPOSITORY NAME
+
+REPO_PATH="/workspaces/crimebox/code" # Path to the repository inside the container
 ANALYSIS_DIR="$ABSOLUTE_ROOT_DIR/analysis_results"
 REPO_ANALYSIS_DIR="$ANALYSIS_DIR/$REPO_NAME"
 MAAT_SCRIPTS_DIR="$ABSOLUTE_ROOT_DIR/maat-scripts"

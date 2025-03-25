@@ -4,9 +4,9 @@
 2. Open the terminal and type `cd repos`
 3. Clone the react repository
 
-`git clone https://github.com/facebook/react.git`
+`git clone https://github.com/vuejs/core.git`
 
-4. Wait for it to finish then type `cd react` to step into the folder
+4. Wait for it to finish then type `cd core` to step into the folder
 
 5. Run git log with these parameters, to get the format we are looking for
 
