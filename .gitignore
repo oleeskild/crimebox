@@ -3,6 +3,7 @@ analysis_results/
 
 # Ignore cloned repositories
 repos/
+code/
 
 # Ignore VS Code specific files
 .vscode/

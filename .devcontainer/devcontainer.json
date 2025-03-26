@@ -3,7 +3,6 @@
     "dockerFile": "Dockerfile",
     "forwardPorts": [],
     "mounts": [
-        "source=${localWorkspaceFolder},target=/workspaces/crimebox,type=bind,consistency=cached",
         //"source=/Users/oleeskild/code,target=/workspaces/crimebox/code,type=bind,consistency=cached"
     ],
     "customizations": {

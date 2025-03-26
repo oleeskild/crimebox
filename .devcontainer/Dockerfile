@@ -26,7 +26,7 @@ RUN echo '#!/bin/bash\njava -jar /usr/local/code-maat/code-maat-1.0.3-standalone
     && chmod +x /usr/local/bin/code-maat
 
 # Create mount point for code directory
-RUN mkdir -p /code && chmod 777 /code
+RUN mkdir -p /workspaces/crimebox/code && chmod 777 /workspaces/crimebox/code
 
 # Setup workspace
 WORKDIR /workspace
