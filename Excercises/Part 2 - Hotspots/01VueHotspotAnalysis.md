@@ -20,7 +20,7 @@ This will get all the git history from 1. January 2024 up until now and put it i
 code-maat -l git_log.txt -c git2 -a revisions > revisions.csv
 ```
 
-This will create a CSV file containing the number of times each file has changed. You can have a look at it by clicking on it inside the `repos/react` folder in the sidebar. 
+This will create a CSV file containing the number of times each file has changed. You can have a look at it by clicking on it inside the `repos/core` folder in the sidebar. 
 
 
 7. Now, we want to measure an approximation of complexity for each file. We can do this by using cloc, a tool that "count lines of code", for most languages in existence. It will skip commments and whitespaces.
