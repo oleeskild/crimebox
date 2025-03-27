@@ -1,8 +1,8 @@
-# Performing a hotspot analysis of react
+# Performing a hotspot analysis of vue
 
 1. Create a new folder called repos
 2. Open the terminal and type `cd repos`
-3. Clone the react repository
+3. Clone the vue repository
 
 `git clone https://github.com/vuejs/core.git`
 
