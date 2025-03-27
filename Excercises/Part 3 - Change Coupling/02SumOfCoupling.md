@@ -9,7 +9,7 @@ An illustration is helpful:
 To run a SOC analysis on your git log generated as described in 01ChangeCoupling, run:
 
 ```bash
-maat -l git_log.txt -c git2 -a soc
+code-maat -l git_log.txt -c git2 -a soc
 ```
 This will output an SOC score for each file. 
 
